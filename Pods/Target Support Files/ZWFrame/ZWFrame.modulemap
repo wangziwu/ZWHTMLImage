@@ -1,0 +1,6 @@
+framework module ZWFrame {
+  umbrella header "ZWFrame-umbrella.h"
+
+  export *
+  module * { export * }
+}
