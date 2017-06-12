@@ -22,7 +22,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="WKWebView" id="RgE-we-eBO"/>
+                    <tabBarItem key="tabBarItem" title="WKWebView" image="icon_work_profile_sel" id="RgE-we-eBO"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hjd-d5-2ao" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -53,7 +53,7 @@
                             <constraint firstItem="y93-hm-pot" firstAttribute="top" secondItem="aIc-Gd-lpy" secondAttribute="bottom" id="w8O-i0-dD1"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="UIWebView" id="ax2-2A-QD7"/>
+                    <tabBarItem key="tabBarItem" title="UIWebView" image="icon_work_profile" id="ax2-2A-QD7"/>
                     <connections>
                         <outlet property="webView" destination="y93-hm-pot" id="5yp-LL-Z2K"/>
                     </connections>
@@ -81,4 +81,8 @@
             <point key="canvasLocation" x="-1630" y="-368"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="icon_work_profile" width="28" height="28"/>
+        <image name="icon_work_profile_sel" width="28" height="28"/>
+    </resources>
 </document>

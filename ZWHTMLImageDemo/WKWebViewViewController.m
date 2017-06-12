@@ -26,13 +26,13 @@
     self.automaticallyAdjustsScrollViewInsets = YES;
     self.webView = [[WKWebView alloc] initWithFrame:self.view.bounds];
     self.webView.navigationDelegate = self;
-    NSURL *url = [NSURL URLWithString:@"http://www.jianshu.com/p/3c54a5d6c34a"];
+    NSURL *url = [NSURL URLWithString:@"http://www.jianshu.com/p/4fb95a281787"];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [self.webView loadRequest:request];
     [self.view addSubview:self.webView];
 }
 -(void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation{
-    self.htmlSDK = [ZWHTMLSDK zw_loadBridgeJSWebview:webView];
+    self.htmlSDK = [ZWHTMLSDK zw_loadStandardBridgeJSWebview:webView];
 }
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
     decisionHandler(WKNavigationActionPolicyAllow);
