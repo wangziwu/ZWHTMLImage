@@ -7,7 +7,7 @@
 //
 
 #import "UIWebViewViewController.h"
-#import <ZWPreviewImage/ZWPreviewImageView.h>
+#import <ZWPhotoPreview/ZWPhotoPreview.h>
 #import "ZWHTMLSDK.h"
 @interface UIWebViewViewController ()<UIWebViewDelegate>
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
@@ -24,23 +24,14 @@
 }
 #pragma mark - config
 - (void)configWebView{
-    NSURL *url = [NSURL URLWithString:@"http://www.jianshu.com/p/3c54a5d6c34a"];
+    NSURL *url = [NSURL URLWithString:@"http://www.jianshu.com/p/4fb95a281787"];
     [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
-//    NSString *html = @"<html><head><title>test</title></head><body><p>测试位置</p></body><script type=\"text/javascript\">p=document.getElementsByTagName('p');alert(p[0].offsetTop);</script></html>";
-//    [self.webView loadHTMLString:html baseURL:nil];
     self.webView.delegate = self;
 }
 #pragma mark - lifeCycle
 #pragma mark - delegate
 -(void)webViewDidFinishLoad:(UIWebView *)webView{
-//    ZWHTMLOption *htmlOption = [[ZWHTMLOption alloc] init];
-//    htmlOption.getAllImageCoreJS = OPTION_StandardCoreJS;
-//    htmlOption.filterURL = @[@"logo",@"avatar",@"icon_comment",@""];
     self.htmlSDK = [ZWHTMLSDK zw_loadStandardBridgeJSWebview:webView];
-    self.htmlSDK.blockHandlePreview = ^(NSArray *allImageArray, NSInteger index) {
-        ZWPreviewImageView *showView = [ZWPreviewImageView showImageWithArray:allImageArray withShowIndex:index];
-        [showView showRootWindow];
-    };
 }
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     if ([self.htmlSDK zw_handlePreviewImageRequest:request]) {

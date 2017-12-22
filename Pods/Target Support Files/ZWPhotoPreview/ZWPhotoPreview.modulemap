@@ -1,0 +1,6 @@
+framework module ZWPhotoPreview {
+  umbrella header "ZWPhotoPreview-umbrella.h"
+
+  export *
+  module * { export * }
+}

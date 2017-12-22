@@ -5,9 +5,13 @@
 //  Created by 王子武 on 2017/6/9.
 //  Copyright © 2017年 wang_ziwu. All rights reserved.
 //
-
+/**
+ *  email : wang_ziwu@126.com
+ *  GitHub: <https://github.com/wangziwu/ZWHTMLImage>
+ *  欢迎指正，如果对您有帮助、请记得Star哦！
+ */
 #import "ZWHTMLSDK.h"
-#import <ZWPreviewImage/ZWPreviewImageView.h>
+#import <ZWPhotoPreview/ZWPhotoPreview.h>
 #import <WebKit/WebKit.h>
 @implementation ZWHTMLSDK
 - (instancetype)zwHTML_init{
@@ -50,15 +54,19 @@
         }
         //拆分后图片地址数组
         NSArray *allImageArray = [allImageURL componentsSeparatedByString:[self encondingNSUTF8:self.zw_option.splitURL]];
+        
         //过滤不合规则的图片
         allImageArray = [self filterImageArray:allImageArray withFilterArray:self.zw_option];
-        NSInteger index = [allImageArray indexOfObject:indexImageURL];
+        //获取点击index
+        NSInteger index = [self indexSelectedImage:indexImageURL allImageUrl:allImageArray];
+        allImageArray = [self checkURLIlegal:allImageArray];
+        
         if (self.blockHandlePreview) {
             self.blockHandlePreview(allImageArray, index);
             return YES;
         }
-        ZWPreviewImageView *showView = [ZWPreviewImageView showImageWithArray:allImageArray withShowIndex:index];
-        [showView showRootWindow];
+        ZWPhotoPreview *view = [ZWPhotoPreview zw_showPhotoPreview:[ZWPhotoPreviewDataModel transformPhotoURLArray:allImageArray]];
+        view.showIndex = index;
         return YES;
     }
     return NO;
@@ -71,6 +79,30 @@
         }
     }
     return NO;
+}
+//获取点击index
+- (NSInteger)indexSelectedImage:(NSString *)indexUrl allImageUrl:(NSArray *)imageURLArray{
+    NSInteger index = 0;
+    for (NSString *url in imageURLArray) {
+        if ([indexUrl containsString:url]) {
+            break;
+        }
+        index ++;
+    }
+    return index;
+}
+//处理html图片地址不合法问题
+- (NSArray *)checkURLIlegal:(NSArray *)imageURLArray {
+    NSMutableArray *mutArray = [NSMutableArray array];
+    for (NSString *url in imageURLArray) {
+        if ([url containsString:@"https://"]||
+            [url containsString:@"http://"]) {
+            [mutArray addObject:url];
+        }else{
+            [mutArray addObject:[url stringByReplacingOccurrencesOfString:@"//" withString:@"https://"]];
+        }
+    }
+    return mutArray;
 }
 #pragma mark - 过滤关键词
 - (NSArray *)filterImageArray:(NSArray *)allImageArray withFilterArray:(ZWHTMLOption *)option{
@@ -110,6 +142,7 @@
     jsStr = [jsStr stringByReplacingOccurrencesOfString:OPTION_SplitURL withString:option.splitURL];
     jsStr = [jsStr stringByReplacingOccurrencesOfString:OPTION_SplitIndex withString:option.splitIndex];
     jsStr = [jsStr stringByReplacingOccurrencesOfString:OPTION_HrefPrefix withString:option.hrefPrefix];
+    jsStr = [jsStr stringByReplacingOccurrencesOfString:OPTION_LazyLoadImgAttr withString:option.lazyLoadImgAttribute];
     return jsStr;
 }
 -(void)setZw_option:(ZWHTMLOption *)zw_option{

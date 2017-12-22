@@ -11,7 +11,6 @@
 #import "ZWHTMLSDK.h"
 @interface WKWebViewViewController ()<WKNavigationDelegate>
 @property (nonatomic, strong) WKWebView *webView;
-/** */
 @property (nonatomic, strong) ZWHTMLSDK *htmlSDK;
 @end
 
@@ -26,7 +25,7 @@
     self.automaticallyAdjustsScrollViewInsets = YES;
     self.webView = [[WKWebView alloc] initWithFrame:self.view.bounds];
     self.webView.navigationDelegate = self;
-    NSURL *url = [NSURL URLWithString:@"http://www.jianshu.com/p/4fb95a281787"];
+    NSURL *url = [NSURL URLWithString:@"http://www.jianshu.com/p/28464c9e9848"];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [self.webView loadRequest:request];
     [self.view addSubview:self.webView];
