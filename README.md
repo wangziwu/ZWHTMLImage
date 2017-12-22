@@ -35,7 +35,7 @@
 ```
 pod 'ZWHTMLImage',       '~> 0.0.2'
 ```
-* 直接将文件ZWPhotoPreview拖入工程中
+* 直接将文件ZWHTMLImage拖入工程中
 
 
  依赖[ZWPhotoPreview](https://github.com/wangziwu/ZWPreviewImage)图片显示框架。
