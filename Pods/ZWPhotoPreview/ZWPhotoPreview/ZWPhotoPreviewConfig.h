@@ -5,7 +5,11 @@
 //  Created by 王子武 on 2017/12/15.
 //  Copyright © 2017年 wang_ziwu. All rights reserved.
 //
-
+/**
+ *  email : wang_ziwu@126.com
+ *  GitHub: <https://github.com/wangziwu/ZWPreviewImage>
+ *  欢迎指正，如果对您有帮助、请记得Star哦！
+ */
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
@@ -22,6 +26,11 @@ typedef NS_ENUM(NSInteger,ZWPanDismissStyle) {
 };
 
 @interface ZWPhotoPreviewConfig : NSObject
+/**
+ *  左右滑动最小判断距离
+ *  默认:20
+ */
+@property (nonatomic, assign) CGFloat dragMinDistanceCoff;
 /**
  *  图片放大倍数
  *  默认: 3.0f
@@ -48,6 +57,11 @@ typedef NS_ENUM(NSInteger,ZWPanDismissStyle) {
  *  默认: 13
  */
 @property (nonatomic, assign) CGFloat photoDescFontSize;
+/**
+ *  图片左右间距
+ *  默认: 20
+ */
+@property (nonatomic, assign) CGFloat photoItemLineSpacing;
 /**
  *  禁止手势拖动隐藏视图动画
  *  默认“开启”手势动画

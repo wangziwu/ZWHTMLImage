@@ -7,7 +7,6 @@
 //
 
 #import "UIWebViewViewController.h"
-#import <ZWPhotoPreview/ZWPhotoPreview.h>
 #import "ZWHTMLSDK.h"
 @interface UIWebViewViewController ()<UIWebViewDelegate>
 @property (weak, nonatomic) IBOutlet UIWebView *webView;

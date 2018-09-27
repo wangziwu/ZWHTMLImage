@@ -1,17 +1,17 @@
 PODS:
-  - SDWebImage (4.0.0):
-    - SDWebImage/Core (= 4.0.0)
-  - SDWebImage/Core (4.0.0)
-  - ZWPhotoPreview (0.1.3):
-    - SDWebImage (~> 4.0.0)
+  - SDWebImage (4.4.2):
+    - SDWebImage/Core (= 4.4.2)
+  - SDWebImage/Core (4.4.2)
+  - ZWPhotoPreview (0.2.1):
+    - SDWebImage (~> 4.4.0)
 
 DEPENDENCIES:
-  - ZWPhotoPreview (~> 0.1.3)
+  - ZWPhotoPreview (~> 0.2.1)
 
 SPEC CHECKSUMS:
-  SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
-  ZWPhotoPreview: 7562b75b082b445bb0fe56a1fb374a115cc19501
+  SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
+  ZWPhotoPreview: da153866a67ccfe7b32097c3c65025efa52a870b
 
-PODFILE CHECKSUM: e665ecaea9938c227fe7795d3800b46ff90955ba
+PODFILE CHECKSUM: b349ae1e82c912d131c07a71830be0872444420f
 
 COCOAPODS: 1.3.1

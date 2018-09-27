@@ -5,7 +5,11 @@
 //  Created by 王子武 on 2017/12/14.
 //  Copyright © 2017年 wang_ziwu. All rights reserved.
 //
-
+/**
+ *  email : wang_ziwu@126.com
+ *  GitHub: <https://github.com/wangziwu/ZWPreviewImage>
+ *  欢迎指正，如果对您有帮助、请记得Star哦！
+ */
 #import "ZWPhotoPreview.h"
 #import "ZWPhotoPreviewCell.h"
 #import "ZWPagePickerView.h"
@@ -19,7 +23,8 @@
 
 @interface ZWPhotoPreview ()
 <UICollectionViewDelegate,
-UICollectionViewDataSource>
+UICollectionViewDataSource,
+UICollectionViewDelegateFlowLayout>
 @property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) UICollectionView *mCollection;
 @property (nonatomic, strong) UIImageView *maskImageView;
@@ -31,6 +36,10 @@ UICollectionViewDataSource>
 @property (nonatomic, strong) UILabel *tips;
 @property (nonatomic, strong) ZWPagePickerView *pagePicker;
 @property (nonatomic, strong) ZWPhotoAskSaveView *photoSaveView;
+@property (nonatomic, assign) NSInteger currentIndex;
+@property (nonatomic, assign) CGFloat dragStartX;
+@property (nonatomic, assign) CGFloat dragEndX;
+@property (nonatomic, assign) BOOL isForbidenRefresh;
 @end
 @implementation ZWPhotoPreview
 @synthesize previewConfig = _previewConfig;
@@ -68,6 +77,9 @@ UICollectionViewDataSource>
 }
 #pragma mark - lifeCycle
 #pragma mark - delegate
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+    return self.previewConfig.photoItemLineSpacing;
+}
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
     return self.photoDatas.count;
 }
@@ -82,9 +94,14 @@ UICollectionViewDataSource>
     };
     return cell;
 }
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    CGFloat page = self.mCollection.contentOffset.x/CGRectGetWidth(self.bounds);
-    self.showIndex = page;
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    self.dragStartX = scrollView.contentOffset.x;
+}
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    self.dragEndX = scrollView.contentOffset.x;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self scrollItemCellToCenter];
+    });
 }
 #pragma mark - actionFunction
 - (void)actionPan:(UIPanGestureRecognizer *)gestureRecognizer {
@@ -92,7 +109,7 @@ UICollectionViewDataSource>
     CGFloat alpha = 1 - fabs(translation.y/CGRectGetHeight(self.bounds) * 2);
     switch (gestureRecognizer.state) {
         case UIGestureRecognizerStateBegan: {
-            [self handlePanFollowImageViewIndex:self.showIndex];
+            [self handlePanFollowImageViewIndex:self.currentIndex];
             self.mCollection.hidden = YES;
             self.maskImageView.hidden = NO;
         }
@@ -136,21 +153,26 @@ UICollectionViewDataSource>
     [self.photoSaveView showAnimation];
     self.photoSaveView.blockSavePhoto = ^{
         //将图片保存到相册
-        UIImageWriteToSavedPhotosAlbum([weakSelf handleShowImageView:weakSelf.showIndex],
+        UIImageWriteToSavedPhotosAlbum([weakSelf handleShowImageView:weakSelf.currentIndex],
                                        weakSelf, @selector(saveImage:finishError:contextInfo:), NULL);
     };
 }
 - (void)actionSelectedPage {
+    self.mCollection.hidden = NO;
     if (self.previewConfig.forbidPickerPage) {
         return;
     }
     __weak typeof(self) weakSelf = self;
     self.pagePicker = [ZWPagePickerView showPagePickerView];
     self.pagePicker.blockPagePicker = ^(NSInteger indexPage) {
+        weakSelf.currentIndex = indexPage;
+        [weakSelf beginScrollToPointItem:NO];
+        weakSelf.isForbidenRefresh = YES;
         weakSelf.showIndex = indexPage;
+        weakSelf.isForbidenRefresh = NO;
     };
     self.pagePicker.maxPage = self.photoDatas.count;
-    self.pagePicker.indexPage = self.showIndex;
+    self.pagePicker.indexPage = self.currentIndex;
     [self addSubview:self.pagePicker];
     [self.pagePicker showAnimation];
 }
@@ -195,14 +217,14 @@ UICollectionViewDataSource>
         [self removeFromSuperview];
     }];
 }
-- (void)changeIndexPageNum:(NSInteger)indexPage{
-    NSString *currPageStr = [NSString stringWithFormat:@"%ld",(long)indexPage + 1];
+- (void)changeIndexPageNum{
+    NSString *currPageStr = [NSString stringWithFormat:@"%ld",(long)self.currentIndex + 1];
     NSString *totalPageStr = [NSString stringWithFormat:@"%lu",(unsigned long)self.photoDatas.count];
     NSString *precent = [NSString stringWithFormat:@"%@/%@",currPageStr,totalPageStr];
     [self.pageBtn setTitle:precent forState:UIControlStateNormal];
 }
-- (void)handleRemarkInfo:(NSInteger)indexPage {
-    ZWPhotoPreviewDataModel *model = self.photoDatas[indexPage];
+- (void)handleRemarkInfo {
+    ZWPhotoPreviewDataModel *model = self.photoDatas[self.currentIndex];
     self.photoTitleLab.font = [UIFont systemFontOfSize:self.previewConfig.photoTitleFontSize];
     self.photoDescLab.font = [UIFont systemFontOfSize:self.previewConfig.photoDescFontSize];
     self.photoTitleLab.frame = CGRectMake(0, 0, CGRectGetWidth(self.mScroll.frame), 0);
@@ -223,8 +245,29 @@ UICollectionViewDataSource>
     }
     self.photoTitleLab.font = [UIFont systemFontOfSize:self.previewConfig.photoTitleFontSize];
     self.photoDescLab.font = [UIFont systemFontOfSize:self.previewConfig.photoDescFontSize];
-    [self handleRemarkInfo:self.showIndex];
+    [self handleRemarkInfo];
     [self.mCollection reloadData];
+}
+-(void)scrollItemCellToCenter{
+    //最小滚动距离
+    float  dragMinDistance = self.previewConfig.dragMinDistanceCoff;
+    if (self.dragStartX - self.dragEndX >= dragMinDistance) {
+        self.currentIndex -= 1; //向右
+    }else if (self.dragEndX - self.dragStartX >= dragMinDistance){
+        self.currentIndex += 1 ;//向左
+    }
+    NSInteger maxIndex  = [self.mCollection numberOfItemsInSection:0] - 1;
+    self.currentIndex = self.currentIndex <= 0 ? 0 :self.currentIndex;
+    self.currentIndex = self.currentIndex >= maxIndex ? maxIndex : self.currentIndex;
+    [self beginScrollToPointItem:YES];
+    self.isForbidenRefresh = YES;
+    self.showIndex = self.currentIndex;
+    self.isForbidenRefresh = NO;
+}
+- (void)beginScrollToPointItem:(BOOL)animated {
+    [self changeIndexPageNum];
+    [self handleRemarkInfo];
+    [self.mCollection scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:self.currentIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:animated];
 }
 #pragma mark - ExportAPI
 /**
@@ -248,15 +291,17 @@ UICollectionViewDataSource>
     if (_showIndex>=self.photoDatas.count) {
         _showIndex = self.photoDatas.count-1;
     }
-    [self changeIndexPageNum:_showIndex];
-    [self handleRemarkInfo:_showIndex];
-    [_mCollection scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:_showIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
+    self.currentIndex = _showIndex;
+    if (self.isForbidenRefresh) {
+        return;
+    }
+    [self beginScrollToPointItem:NO];
 }
 - (void)setPhotoDatas:(NSArray<ZWPhotoPreviewDataModel *> *)photoDatas {
     _photoDatas = photoDatas;
     if (photoDatas.count) {
-        [self changeIndexPageNum:0];
-        [self handleRemarkInfo:0];
+        [self changeIndexPageNum];
+        [self handleRemarkInfo];
     }else{
         [self removeFromSuperview];
     }
@@ -265,7 +310,6 @@ UICollectionViewDataSource>
     if (!_mCollection) {
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
         layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-        layout.minimumLineSpacing = 0;
         layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
         layout.itemSize = self.bounds.size;
         _mCollection = [[UICollectionView alloc] initWithFrame:self.bounds
@@ -274,7 +318,8 @@ UICollectionViewDataSource>
          forCellWithReuseIdentifier:NSStringFromClass([ZWPhotoPreviewCell class])];
         _mCollection.dataSource = self;
         _mCollection.delegate = self;
-        _mCollection.pagingEnabled = YES;
+        //开启会影响手势
+//        _mCollection.pagingEnabled = YES;
     }
     return _mCollection;
 }
