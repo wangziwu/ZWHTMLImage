@@ -164,9 +164,9 @@
     }
     return _mScroll;
 }
-- (UIImageView *)photoImageView {
+- (FLAnimatedImageView *)photoImageView {
     if (!_photoImageView) {
-        _photoImageView = [[UIImageView alloc] init];
+        _photoImageView = [[FLAnimatedImageView alloc] init];
     }
     return _photoImageView;
 }

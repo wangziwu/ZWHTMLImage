@@ -23,7 +23,7 @@
 }
 #pragma mark - config
 - (void)configWebView{
-    NSURL *url = [NSURL URLWithString:@"http://www.jianshu.com/p/4fb95a281787"];
+    NSURL *url = [NSURL URLWithString:@"https://www.jianshu.com/p/aa2f1dc8dff7"];
     [self.webView loadRequest:[NSURLRequest requestWithURL:url]];
     self.webView.delegate = self;
 }

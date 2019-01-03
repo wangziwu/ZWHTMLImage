@@ -6,5 +6,5 @@ target 'ZWHTMLImageDemo' do
    use_frameworks!
 
   # Pods for ZWHTMLImageDemo
-	pod 'ZWPhotoPreview', 	'~> 0.2.1'
+	pod 'ZWPhotoPreview', 	'~> 0.2.2'
 end

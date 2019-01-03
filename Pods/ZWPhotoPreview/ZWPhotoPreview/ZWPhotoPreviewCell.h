@@ -11,10 +11,11 @@
  *  欢迎指正，如果对您有帮助、请记得Star哦！
  */
 #import <UIKit/UIKit.h>
+#import <FLAnimatedImage/FLAnimatedImageView.h>
 @class ZWPhotoPreviewDataModel;
 @class ZWPhotoPreviewConfig;
 @interface ZWPhotoPreviewCell : UICollectionViewCell
-@property (nonatomic, strong) UIImageView *photoImageView;
+@property (nonatomic, strong) FLAnimatedImageView *photoImageView;
 /**
  *  相关配置
  *  (缩放系数、手势消失临界值等)
