@@ -16,12 +16,12 @@
 > 支持懒加载（滚动加载）类型HTML网页
 
 ### 框架整体介绍
-* 该框架为一个通用HTML图片预览框架，旨在提供一种简单快捷的调用方式来native预览网页图片。
-* 同时支持UIWebView与WKWebView。
-* 支持网页图片自定义过滤规则。过滤“头像、广告”之类的小图标。
-* 支持用户自定义核心抓取图片JS、自定义解析规则。
-* 支持配置参数确定是否仅抓取正文（conent）部分图片。
-
+- [x] 该框架为一个通用HTML图片预览框架，旨在提供一种简单快捷的调用方式来native预览网页图片。
+- [x] 同时支持UIWebView与WKWebView。
+- [x] 支持GIF图片预览显示。
+- [x] 支持网页图片自定义过滤规则。过滤“头像、广告”之类的小图标。
+- [x] 支持用户自定义核心抓取图片JS、自定义解析规则。
+- [x] 支持配置参数确定是否仅抓取正文（conent）部分图片。
 
 ### 效果展示
 
@@ -33,7 +33,7 @@
 * 使用cocoaPods导入(搜索不到请更新本地仓库)
 
 ```
-pod 'ZWHTMLImage',       '~> 0.0.2'
+pod 'ZWHTMLImage',       '~> 0.0.4'
 ```
 * 直接将文件ZWHTMLImage拖入工程中
 
@@ -52,6 +52,13 @@ Privacy - Photo Library Additions Usage Description
 Privacy - Photo Library Usage Description
 ```
 
+### v0.0.4版本更新记录
+
+- 【新增】: 支持GIF图片预览显示
+
+### v0.0.3版本更新记录
+
+- 【更新】: 更新SDWebImage版本至4.0.0
 
 ### v0.0.2版本更新记录
 
